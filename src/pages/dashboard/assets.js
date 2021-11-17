@@ -27,6 +27,7 @@ export default function Assets() {
   const [address, setAddress] = useState('')
   const [searchValue, setSearchValue] = useState('Name')
   const [createdAssets, setCreatedAssets] = useState([])
+  const [txParamsJS, setTxParamsJS] = useState()
   const [open, setOpen] = useState(false)
   const handleOpenModal = () => setOpen(true)
   const handleCloseModal = () => setOpen(false)
@@ -68,9 +69,19 @@ export default function Assets() {
     // }
   }, [])
 
+  // useEffect(() => {
+  //   window.onbeforeunload = function () {
+  //     router.push('/login')
+  //   }
+
+  //   return () => {
+  //     window.onbeforeunload = null
+  //   }
+  // }, [])
+
   const setupSDK = () => {
     const server = 'https://testnet-algorand.api.purestake.io/ps2'
-    const token = { 'X-API-Key': 'YOUR API KEY HERE' }
+    const token = { 'X-API-Key': 'B3SU4KcVKi94Jap2VXkK83xx38bsv95K5UZm2lab' }
     const port = ''
 
     // let _AlgoSigner = AlgoSigner || null
@@ -91,12 +102,16 @@ export default function Assets() {
   }
 
   const getParams = () => {
+    const server = 'https://testnet-algorand.api.purestake.io/ps2'
+    const token = { 'X-API-Key': 'B3SU4KcVKi94Jap2VXkK83xx38bsv95K5UZm2lab' }
+    const port = ''
+    const algodClient = new algosdk.Algodv2(token, server, port)
     algodClient
       .getTransactionParams()
       .do()
       .then((d) => {
         console.log(d)
-        // txParamsJS = d
+        setTxParamsJS(d)
       })
       .catch((e) => {
         console.error(e)
@@ -468,6 +483,7 @@ export default function Assets() {
                             <CreateAssets
                               setModal={setOpen}
                               asstes={createdAssets}
+                              txParamsJS={txParamsJS}
                             />
                           </Typography>
                         </Box>

@@ -11,8 +11,56 @@ import { withStyles, makeStyles } from '@material-ui/core/styles'
 import { useState } from 'react'
 import HighlightOffIcon from '@material-ui/icons/HighlightOff'
 import InfoRoundedIcon from '@material-ui/icons/InfoRounded'
+import { getSelectedAccount } from 'function/HelperFunction'
 
-export default function CreateAssets({ setModal, assets }) {
+export default function CreateAssets({ setModal, assets, txParamsJS }) {
+  const [assetName, setAssetName] = useState('')
+  const [decimal, setDecimal] = useState('')
+  const [total, setTotal] = useState('')
+  const [unitName, setUnitName] = useState('')
+  const handleChangeName = (event) => {
+    const assetVal = event.target.value
+    setAssetName(assetVal)
+  }
+  const handleChangeDeciamal = (event) => {
+    const decimalVal = event.target.value
+    setDecimal(decimalVal)
+  }
+  const handleChangeTotal = (event) => {
+    const totalVal = event.target.value
+    setTotal(totalVal)
+  }
+  const handleChangeUnitName = (event) => {
+    const unitVal = event.target.value
+    setUnitName(unitVal)
+  }
+
+  const createAsset = () => {
+    let _AlgoSigner = AlgoSigner || null
+
+    const txn = algosdk.makeAssetCreateTxnWithSuggestedParamsFromObject({
+      from: getSelectedAccount(),
+      assetName: assetName,
+      unitName: unitName,
+      total: +total,
+      decimals: +decimal,
+      note: AlgoSigner.encoding.stringToByteArray('note'),
+      suggestedParams: { ...txParamsJS },
+    })
+
+    // Use the AlgoSigner encoding library to make the transactions base64
+    const txn_b64 = AlgoSigner.encoding.msgpackToBase64(txn.toByte())
+
+    _AlgoSigner
+      .signTxn([{ txn: txn_b64 }])
+      .then((d) => {
+        // signedTxs = d;
+        console.log('d', d)
+      })
+      .catch((e) => {})
+      .finally(() => {})
+  }
+
   const useStyles = makeStyles((theme) => ({
     root: {
       display: 'flex',
@@ -119,12 +167,13 @@ export default function CreateAssets({ setModal, assets }) {
         <Grid item xs={6}>
           <ListItem>
             <InputTextField
-              multiline={true}
+              // multiline={true}
               fullWidth
               className={classes.margin}
+              value={assetName}
+              onChange={handleChangeName}
               label="Name*"
               variant="outlined"
-              value=""
               id="custom-css-outlined-input"
             />
           </ListItem>
@@ -135,9 +184,10 @@ export default function CreateAssets({ setModal, assets }) {
               multiline={true}
               fullWidth
               className={classes.margin}
+              onChange={handleChangeUnitName}
               label="Unit name*"
               variant="outlined"
-              value=""
+              value={unitName}
               id="custom-css-outlined-input"
             />
           </ListItem>
@@ -148,9 +198,10 @@ export default function CreateAssets({ setModal, assets }) {
               multiline={true}
               fullWidth
               className={classes.margin}
+              onChange={handleChangeTotal}
               label="Total supply*"
               variant="outlined"
-              value=""
+              value={total}
               id="custom-css-outlined-input"
             />
           </ListItem>
@@ -161,9 +212,10 @@ export default function CreateAssets({ setModal, assets }) {
               multiline={true}
               fullWidth
               className={classes.margin}
+              onChange={handleChangeDeciamal}
               label="Decimals"
               variant="outlined"
-              value=""
+              value={decimal}
               id="custom-css-outlined-input"
             />
           </ListItem>
@@ -309,6 +361,7 @@ export default function CreateAssets({ setModal, assets }) {
           color="primary"
           style={{ cursor: 'pointer' }}
           className={classes.margin}
+          onClick={createAsset}
           InputProps={{
             className: classes.note,
           }}>

@@ -6,22 +6,57 @@ import { GET_ASSETS } from 'function/APiUrl'
 import axios from 'axios'
 import algosdk from 'algosdk'
 import CodeImg from '../../assets/image/code.png'
-import { Modal, TextField } from '@material-ui/core'
+import {
+  Modal,
+  TextField,
+  Box,
+  Typography,
+  Paper,
+  withStyles,
+  makeStyles,
+} from '@material-ui/core'
 import SEO from 'components/seo'
 import { useRouter } from 'next/router'
 import { getSelectedAccount } from 'function/HelperFunction'
+import CreateAssets from 'components/createAssets'
 
 export default function Assets() {
   const router = useRouter()
   const [assets, setAssets] = useState([])
   const [amount, setAmount] = useState(0)
   const [address, setAddress] = useState('')
+  const [searchValue, setSearchValue] = useState('Name')
   const [createdAssets, setCreatedAssets] = useState([])
   const [open, setOpen] = useState(false)
   const handleOpenModal = () => setOpen(true)
   const handleCloseModal = () => setOpen(false)
 
+  const useStyles = makeStyles((theme) => ({
+    root: {
+      display: 'flex',
+      flexWrap: 'wrap',
+    },
+    margin: {
+      margin: theme.spacing(1),
+    },
+  }))
+  const classes = useStyles()
+
+  const style = {
+    position: 'absolute',
+    // overflow: 'auto',
+    top: '48%',
+    left: '50%',
+    width: '55%',
+    outerHeight: 'auto',
+    transform: 'translate(-50%, -50%)',
+    bgcolor: '#ffff',
+    boxShadow: 24,
+    p: 4,
+  }
+
   useEffect(() => {
+    // if (!localStorage) {
     axios.get(`${GET_ASSETS}/${getSelectedAccount()}`).then((response) => {
       const { assets, amount, address } = response.data
       setAssets(assets)
@@ -29,7 +64,24 @@ export default function Assets() {
       setAmount(amount)
       setCreatedAssets(response.data['created-assets'])
     })
+    // }
   }, [])
+
+  const InputTextField = withStyles({
+    root: {
+      '& label.Mui-focused': {
+        color: '#03B68C',
+      },
+      '& .MuiInput-underline:after': {
+        borderBottomColor: '#03B68C',
+      },
+      '& .MuiOutlinedInput-root': {
+        '&.Mui-focused fieldset': {
+          borderColor: '#03B68C',
+        },
+      },
+    },
+  })(TextField)
 
   const createAssets = () => {
     let _AlgoSigner = AlgoSigner || null
@@ -69,7 +121,8 @@ export default function Assets() {
     navigator.clipboard.writeText(copyText.value)
   }
   const handleSearch = (event) => {
-    // const searchString = event.target.value
+    const searchString = event.target.value
+    setSearchValue(searchString)
     // const filterValue = searchString
     //   ? createdAssets.filter((asset) =>
     //       asset.params.name
@@ -178,7 +231,10 @@ export default function Assets() {
                               aria-hidden="true">
                               <path
                                 d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"
-                                style={{ color: '#V' }}></path>
+                                style={{
+                                  color: '#V',
+                                  cursor: 'pointer',
+                                }}></path>
                             </svg>
                           </span>
                         </div>
@@ -200,20 +256,17 @@ export default function Assets() {
                         id="Hide"
                         name="Hide"
                         value="balances"
-                        class=" hide_bals"
+                        className=" hide_bals"
                       />
                       <label for="Hide" class="hide_bal">
                         &nbsp; Hide 0 balances&nbsp;
                       </label>
-                      {/* modal */}
                       <Modal
                         open={open}
                         onClose={handleCloseModal}
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description">
-                        {/* <Box> */}
-                        <div
-                          // className="modal fade bd-example-modal-lg"
+                        {/* <div
                           tabindex="-1"
                           role="dialog"
                           aria-hidden="true">
@@ -269,16 +322,6 @@ export default function Assets() {
                                                 className="form-control"
                                                 placeholder="Decimal"
                                               />
-                                              {/* <select
-                                                  id="inputState"
-                                                  className="default-select form-control wide">
-                                                  <option selected>
-                                                    Decimal...
-                                                  </option>
-                                                  <option>1</option>
-                                                  <option>2</option>
-                                                  <option>3</option>
-                                                </select> */}
                                             </div>
                                             <div className="mb-3 col-md-6">
                                               <input
@@ -380,23 +423,32 @@ export default function Assets() {
                               </div>
                             </div>
                           </div>
-                        </div>
+                        </div> */}
+                        <Box sx={style} borderRadius="3%">
+                          <Typography
+                            id="modal-modal-title"
+                            variant="h6"
+                            component="h2">
+                            <CreateAssets
+                              setModal={setOpen}
+                              asstes={createdAssets}
+                            />
+                          </Typography>
+                        </Box>
                       </Modal>
 
                       {/* modal */}
                       <div className="content-header-actions">
                         <div className="search">
-                          <TextField
-                            id="outlined-basic"
-                            label="Search asset"
+                          <InputTextField
+                            fullWidth
+                            className={classes.margin}
+                            label="Note"
                             variant="outlined"
-                            placeholder="Name"
-                          />
-                          {/* <input
-                            type="text"
-                            placeholder="Search"
+                            value="Name"
+                            id="custom-css-outlined-input"
                             onChange={handleSearch}
-                          /> */}
+                          />
                           <button type="submit">
                             <i class="ph-magnifying-glass-bold"></i>
                           </button>

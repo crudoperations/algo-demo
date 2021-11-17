@@ -1693,3 +1693,7 @@ body {
     margin: 30px;
     font-size: 12px;
 }
+
+.textfield__label{
+  color: #03B68C;
+}

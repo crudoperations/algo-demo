@@ -17,7 +17,7 @@ import {
 } from '@material-ui/core'
 import SEO from 'components/seo'
 import { useRouter } from 'next/router'
-import { getSelectedAccount } from 'function/HelperFunction'
+import { getAddressParams, getSelectedAccount } from 'function/HelperFunction'
 import CreateAssets from 'components/createAssets'
 
 export default function Assets() {
@@ -59,6 +59,7 @@ export default function Assets() {
     // if (!localStorage) {
     axios.get(`${GET_ASSETS}/${getSelectedAccount()}`).then((response) => {
       const { assets, amount, address } = response.data
+      setupSDK()
       setAssets(assets)
       setAddress(address)
       setAmount(amount)
@@ -66,6 +67,38 @@ export default function Assets() {
     })
     // }
   }, [])
+
+  const setupSDK = () => {
+    const server = 'https://testnet-algorand.api.purestake.io/ps2'
+    const token = { 'X-API-Key': 'YOUR API KEY HERE' }
+    const port = ''
+
+    algodClient = new algosdk.Algodv2(token, server, port)
+
+    algodClient
+      .healthCheck()
+      .do()
+      .then((d) => {
+        console.log('d', d)
+        getParams()
+      })
+      .catch((e) => {
+        console.error(e)
+      })
+  }
+
+  const getParams = () => {
+    algodClient
+      .getTransactionParams()
+      .do()
+      .then((d) => {
+        console.log(d)
+        // txParamsJS = d
+      })
+      .catch((e) => {
+        console.error(e)
+      })
+  }
 
   const InputTextField = withStyles({
     root: {

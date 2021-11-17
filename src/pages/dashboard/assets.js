@@ -73,7 +73,10 @@ export default function Assets() {
     const token = { 'X-API-Key': 'YOUR API KEY HERE' }
     const port = ''
 
-    algodClient = new algosdk.Algodv2(token, server, port)
+    // let _AlgoSigner = AlgoSigner || null
+
+    const algodClient = new algosdk.Algodv2(token, server, port)
+    console.log('algodClient', algodClient)
 
     algodClient
       .healthCheck()
@@ -495,8 +498,8 @@ export default function Assets() {
                         <div className="row">
                           {createdAssets &&
                             createdAssets.length > 0 &&
-                            createdAssets.map((asset) => (
-                              <div className="col-lg-6 col-md-6">
+                            createdAssets.map((asset, index) => (
+                              <div className="col-lg-6 col-md-6" key={index}>
                                 <div className="card-body roots">
                                   <div
                                     className="assets"

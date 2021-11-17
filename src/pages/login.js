@@ -30,16 +30,20 @@ export default function Login() {
     const walletValue = event.target.value
     setWalletValue(walletValue)
   }
-  const connectWallet = (address) => {
+
+  const navigateToAssetPage = (address) => {
     localStorage.setItem('USER_ADDRESS', address)
     setSelectedAccount(address)
+    history.push('/dashboard/assets')
+  }
+  const connectWallet = (address) => {
     let _AlgoSigner = AlgoSigner || null
     if (_AlgoSigner && walletValue) {
       _AlgoSigner
         .connect()
         .then((d) => {
           setOpen(false)
-          history.push('/dashboard/assets')
+          getAccount()
         })
         .catch((e) => {
           console.error(e)
@@ -83,7 +87,6 @@ export default function Login() {
       }
     }
   }
-  console.log('xdfghjkl', address)
 
   return (
     <ThemeProvider theme={theme}>
@@ -179,7 +182,7 @@ export default function Login() {
                                     </div>
                                     <div
                                       className="AlgoSigner"
-                                      onClick={getAccount}>
+                                      onClick={connectWallet}>
                                       <img
                                         className="logo"
                                         src={wallet}
@@ -258,10 +261,11 @@ export default function Login() {
                     <div className="param assets">
                       {address &&
                         address.length > 0 &&
-                        address.map((asset) => (
+                        address.map((asset, index) => (
                           <div
+                            key={index}
                             className="value  assets back-highlight1"
-                            onClick={() => connectWallet(asset.address)}>
+                            onClick={() => navigateToAssetPage(asset.address)}>
                             {asset.address}
                             <span className="indicator"></span>
                           </div>

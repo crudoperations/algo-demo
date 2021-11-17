@@ -1,6 +1,5 @@
 import {
   TextField,
-  Box,
   Grid,
   ListItem,
   Switch,
@@ -8,7 +7,6 @@ import {
   FormControlLabel,
   Button,
 } from '@material-ui/core'
-import { purple } from '@material-ui/core/colors'
 import { withStyles, makeStyles } from '@material-ui/core/styles'
 import { useState } from 'react'
 import HighlightOffIcon from '@material-ui/icons/HighlightOff'

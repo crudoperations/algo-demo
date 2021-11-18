@@ -7,7 +7,12 @@ import { ThemeProvider } from '@theme-ui/core'
 import { StickyProvider } from 'contexts/app/app.provider'
 import Layout from 'components/layout'
 import SEO from 'components/seo'
-import { CustomMessage, setSelectedAccount } from 'function/HelperFunction'
+import {
+  CustomMessage,
+  getSelectedWallet,
+  setSelectedAccount,
+  setSelectedWallet,
+} from 'function/HelperFunction'
 import { useSnackbar } from 'notistack'
 import { useRouter } from 'next/router'
 import { Modal } from '@material-ui/core'
@@ -29,6 +34,7 @@ export default function Login() {
   const handleChange = (event) => {
     const walletValue = event.target.value
     setWalletValue(walletValue)
+    setSelectedWallet(walletValue)
   }
 
   const navigateToAssetPage = (address) => {
@@ -56,7 +62,7 @@ export default function Login() {
     let _AlgoSigner = AlgoSigner ? AlgoSigner : null
     _AlgoSigner
       .accounts({
-        ledger: 'TestNet',
+        ledger: getSelectedWallet(),
       })
       .then((d) => {
         setAddress(d)
@@ -108,6 +114,7 @@ export default function Login() {
                                 type="radio"
                                 name="optradio"
                                 onChange={handleChange}
+                                value="TestNet"
                               />{' '}
                               TestNet{' '}
                             </label>
@@ -116,6 +123,7 @@ export default function Login() {
                                 type="radio"
                                 name="optradio"
                                 onChange={handleChange}
+                                value="BetaNet"
                               />{' '}
                               BetaNet{' '}
                             </label>
@@ -124,6 +132,7 @@ export default function Login() {
                                 type="radio"
                                 name="optradio"
                                 onChange={handleChange}
+                                value="MainNet"
                               />{' '}
                               MainNet{' '}
                             </label>

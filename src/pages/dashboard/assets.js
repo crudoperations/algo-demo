@@ -45,7 +45,6 @@ export default function Assets() {
 
   const style = {
     position: 'absolute',
-    // overflow: 'auto',
     top: '48%',
     left: '50%',
     width: '55%',
@@ -75,8 +74,6 @@ export default function Assets() {
     const server = 'https://testnet-algorand.api.purestake.io/ps2'
     const token = { 'X-API-Key': 'B3SU4KcVKi94Jap2VXkK83xx38bsv95K5UZm2lab' }
     const port = ''
-
-    // let _AlgoSigner = AlgoSigner || null
 
     const algodClient = new algosdk.Algodv2(token, server, port)
     console.log('algodClient', algodClient)
@@ -126,43 +123,17 @@ export default function Assets() {
     },
   })(TextField)
 
-  const createAssets = () => {
-    let _AlgoSigner = AlgoSigner || null
-    console.log('adsk', algosdk)
-    const txn = algosdk.makeAssetCreateTxnWithSuggestedParamsFromObject({
-      // from: document.getElementById('from').value,
-      assetName: document.getElementById('name').value,
-      unitName: document.getElementById('unit-name').value,
-      total: +document.getElementById('total').value,
-      decimals: +document.getElementById('decimal').value,
-      assetURL: +document.getElementById('asset-url').value,
-      assetMetadataHash: +document.getElementById('asset-hash').value,
-      // note: _AlgoSigner.encoding.stringToByteArray(
-      //   document.getElementById('note').value
-      // ),
-      // suggestedParams: { ...txParamsJS },
-    })
-
-    // const txn_b64 = _AlgoSigner.encoding.msgpackToBase64(txn.toByte())
-    console.log('txn', txn)
-
-    // _AlgoSigner
-    //   .signTxn([{ txn: txn_b64 }])
-    //   .then((d) => {
-    //     signedTxs = d
-    //     signCodeElem.innerHTML = JSON.stringify(d, null, 2)
-    //   })
-    //   .catch((e) => {
-    //     console.error(e)
-    //   })
-  }
-
   const copyText = () => {
-    let copyText = document.getElementById('copyText')
-    copyText.select()
-    copyText.setSelectionRange(0, 99999)
-    navigator.clipboard.writeText(copyText.value)
+    const area = document.getElementById('#clipboard-area')
+    area.select()
+    document.execCommand('copy')
   }
+
+  // function handleCopyTextFromArea() {
+  //   const area = document.querySelector('#clipboard-area')
+  //   area.select()
+  //   document.execCommand('copy')
+  // }
   const handleSearch = (event) => {
     const searchString = event.target.value
     setSearchValue(searchString)
@@ -176,6 +147,7 @@ export default function Assets() {
     //   : createdAssets
     // setCreatedAssets(filterValue)
   }
+
   return (
     <ThemeProvider theme={theme}>
       <StickyProvider>
@@ -189,7 +161,6 @@ export default function Assets() {
                   height="100em"
                 />
               </div>
-
               <div className="header-navigation-actions">
                 <fieldset>
                   <div className="MuiButton-outlinedPrimary">
@@ -223,10 +194,12 @@ export default function Assets() {
                             alt="address"
                             style={{ width: '30px' }}
                           />
-                          &nbsp;&nbsp; {address}
+                          &nbsp;&nbsp;{' '}
+                          <span id="clipboard-area">{address}</span>
                           <span
                             className="action jss121 jss122"
-                            title="Copy Address">
+                            title="Copy Address"
+                            onClick={copyText}>
                             <svg
                               class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall"
                               focusable="false"
@@ -477,6 +450,7 @@ export default function Assets() {
                               asstes={createdAssets}
                               txParamsJS={txParamsJS}
                               getAssets={getAssets}
+                              address={address}
                             />
                           </Typography>
                         </Box>

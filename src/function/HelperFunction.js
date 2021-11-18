@@ -22,3 +22,12 @@ export function getSelectedAccount() {
 export function getAddressParams() {
   return localStorage.getItem('USER_ADDRESS')
 }
+
+let selectedWallet = ''
+export function setSelectedWallet(val) {
+  selectedWallet = val
+}
+
+export function getSelectedWallet() {
+  return selectedWallet
+}

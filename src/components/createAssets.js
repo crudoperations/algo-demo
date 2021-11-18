@@ -8,22 +8,48 @@ import {
   Button,
 } from '@material-ui/core'
 import { withStyles, makeStyles } from '@material-ui/core/styles'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import HighlightOffIcon from '@material-ui/icons/HighlightOff'
 import InfoRoundedIcon from '@material-ui/icons/InfoRounded'
-import { getSelectedAccount } from 'function/HelperFunction'
+import { getSelectedAccount, getSelectedWallet } from 'function/HelperFunction'
+import Swal from 'sweetalert2'
 
 export default function CreateAssets({
   setModal,
   assets,
   txParamsJS,
   getAssets,
+  address,
 }) {
   const [assetName, setAssetName] = useState('')
   const [decimal, setDecimal] = useState('')
   const [total, setTotal] = useState('')
   const [unitName, setUnitName] = useState('')
   const [notes, setNotes] = useState('')
+
+  const [manager, setManager] = useState(address)
+  const [recerve, setRecerve] = useState(address)
+  const [freeze, setFreeze] = useState(address)
+  const [clawBack, setClawBack] = useState(address)
+  const [loading, setLoading] = useState(false)
+
+  const handleChangeManager = (event) => {
+    const managerVal = event.target.value
+    setManager(managerVal)
+  }
+  const handleChangeRecerve = (event) => {
+    const recerveVal = event.target.value
+    setRecerve(recerveVal)
+  }
+  const handleChangefreeze = (event) => {
+    const freezeVal = event.target.value
+    setFreeze(freezeVal)
+  }
+  const handleChangeclawBack = (event) => {
+    const clawbackVal = event.target.value
+    setClawBack(clawbackVal)
+  }
+
   const handleChangeName = (event) => {
     const assetVal = event.target.value
     setAssetName(assetVal)
@@ -46,6 +72,12 @@ export default function CreateAssets({
     setNotes(noteVal)
   }
 
+  useEffect(() => {
+    if (loading) {
+      Swal.showLoading()
+    }
+  }, [])
+
   const createAsset = () => {
     let _AlgoSigner = AlgoSigner || null
 
@@ -64,10 +96,56 @@ export default function CreateAssets({
     _AlgoSigner
       .signTxn([{ txn: txn_b64 }])
       .then((d) => {
+        sendSignedTransaction(d[0].blob)
+        console.log('111', d)
+        setModal(false)
         getAssets()
       })
       .catch((e) => {})
       .finally(() => {})
+  }
+
+  const sendSignedTransaction = (blob) => {
+    let _AlgoSigner = AlgoSigner || null
+    _AlgoSigner
+      .send({
+        ledger: getSelectedWallet(),
+        tx: blob,
+      })
+      .then((d) => {
+        checkTransaction(d.txId)
+        console.log('222', d)
+      })
+      .catch((e) => {
+        console.error(e)
+      })
+  }
+
+  const checkTransaction = (txId) => {
+    setLoading(true)
+    let _AlgoSigner = AlgoSigner || null
+    _AlgoSigner
+      .algod({
+        ledger: getSelectedWallet(),
+        path: '/v2/transactions/pending/' + `${txId}`,
+      })
+      .then((d) => {
+        setLoading(false)
+        Swal.fire({
+          title: 'Transaction successfull',
+          text: txId,
+          icon: 'success',
+          confirmButtonColor: '#03B68C',
+          confirmButtonText: 'View transaction',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.open(`${'https://testnet.algoexplorer.io/tx'}/${txId}`)
+          }
+        })
+      })
+      .catch((e) => {
+        console.error(e)
+      })
   }
 
   const useStyles = makeStyles((theme) => ({
@@ -103,10 +181,31 @@ export default function CreateAssets({
     checkedA: true,
     checkedB: true,
     checkedC: true,
+    checkedD: true,
   })
 
   const handleChange = (event) => {
     setState({ ...state, [event.target.name]: event.target.checked })
+    if (state.checkedA && event.target.name === 'checkedA') {
+      setManager('')
+    } else {
+      setManager(address)
+    }
+    if (state.checkedB && event.target.name === 'checkedB') {
+      setRecerve('')
+    } else {
+      setRecerve(address)
+    }
+    if (state.checkedC && event.target.name === 'checkedC') {
+      setFreeze('')
+    } else {
+      setFreeze(address)
+    }
+    if (state.checkedD && event.target.name === 'checkedD') {
+      setClawBack('')
+    } else {
+      setClawBack(address)
+    }
   }
 
   const handleClose = () => {
@@ -173,7 +272,7 @@ export default function CreateAssets({
         <Grid item xs={6}>
           <ListItem>
             <TextField
-              // multiline={true}
+              multiline={true}
               fullWidth
               className={classes.inputText}
               value={assetName}
@@ -255,7 +354,9 @@ export default function CreateAssets({
               }}
               label="Manger"
               variant="outlined"
-              value="XJE4PSPQPFSUSIH76OIISHITKV5KO3NLAE3ISJHMARS722FRE5AR4XUXUQ"
+              disabled={!state.checkedA}
+              onChange={handleChangeManager}
+              value={manager}
               id="custom-css-outlined-input"
             />
           </ListItem>
@@ -266,9 +367,9 @@ export default function CreateAssets({
               <FormControlLabel
                 control={
                   <AddSwitch
-                    checked={state.checkedA}
+                    checked={state.checkedB}
                     onChange={handleChange}
-                    name="checkedA"
+                    name="checkedB"
                   />
                 }
               />
@@ -284,7 +385,9 @@ export default function CreateAssets({
               }}
               label="Reserve"
               variant="outlined"
-              value="XJE4PSPQPFSUSIH76OIISHITKV5KO3NLAE3ISJHMARS722FRE5AR4XUXUQ"
+              onChange={handleChangeRecerve}
+              value={recerve}
+              disabled={!state.checkedB}
               id="custom-css-outlined-input"
             />
           </ListItem>
@@ -295,9 +398,9 @@ export default function CreateAssets({
               <FormControlLabel
                 control={
                   <AddSwitch
-                    checked={state.checkedA}
+                    checked={state.checkedC}
                     onChange={handleChange}
-                    name="checkedA"
+                    name="checkedC"
                   />
                 }
               />
@@ -313,7 +416,9 @@ export default function CreateAssets({
               }}
               label="Freeze"
               variant="outlined"
-              value="XJE4PSPQPFSUSIH76OIISHITKV5KO3NLAE3ISJHMARS722FRE5AR4XUXUQ"
+              onChange={handleChangefreeze}
+              value={freeze}
+              disabled={!state.checkedC}
               id="custom-css-outlined-input"
             />
           </ListItem>
@@ -324,9 +429,9 @@ export default function CreateAssets({
               <FormControlLabel
                 control={
                   <AddSwitch
-                    checked={state.checkedA}
+                    checked={state.checkedD}
                     onChange={handleChange}
-                    name="checkedA"
+                    name="checkedD"
                   />
                 }
               />
@@ -342,7 +447,9 @@ export default function CreateAssets({
               }}
               label="Clawback"
               variant="outlined"
-              value="XJE4PSPQPFSUSIH76OIISHITKV5KO3NLAE3ISJHMARS722FRE5AR4XUXUQ"
+              onChange={handleChangeclawBack}
+              value={clawBack}
+              disabled={!state.checkedD}
               id="custom-css-outlined-input"
             />
           </ListItem>

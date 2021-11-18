@@ -57,7 +57,10 @@ export default function Assets() {
   }
 
   useEffect(() => {
-    // if (!localStorage) {
+    getAssets()
+  }, [])
+
+  const getAssets = () => {
     axios.get(`${GET_ASSETS}/${getSelectedAccount()}`).then((response) => {
       const { assets, amount, address } = response.data
       setupSDK()
@@ -66,18 +69,7 @@ export default function Assets() {
       setAmount(amount)
       setCreatedAssets(response.data['created-assets'])
     })
-    // }
-  }, [])
-
-  // useEffect(() => {
-  //   window.onbeforeunload = function () {
-  //     router.push('/login')
-  //   }
-
-  //   return () => {
-  //     window.onbeforeunload = null
-  //   }
-  // }, [])
+  }
 
   const setupSDK = () => {
     const server = 'https://testnet-algorand.api.purestake.io/ps2'
@@ -484,6 +476,7 @@ export default function Assets() {
                               setModal={setOpen}
                               asstes={createdAssets}
                               txParamsJS={txParamsJS}
+                              getAssets={getAssets}
                             />
                           </Typography>
                         </Box>

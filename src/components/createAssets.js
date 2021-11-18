@@ -13,11 +13,17 @@ import HighlightOffIcon from '@material-ui/icons/HighlightOff'
 import InfoRoundedIcon from '@material-ui/icons/InfoRounded'
 import { getSelectedAccount } from 'function/HelperFunction'
 
-export default function CreateAssets({ setModal, assets, txParamsJS }) {
+export default function CreateAssets({
+  setModal,
+  assets,
+  txParamsJS,
+  getAssets,
+}) {
   const [assetName, setAssetName] = useState('')
   const [decimal, setDecimal] = useState('')
   const [total, setTotal] = useState('')
   const [unitName, setUnitName] = useState('')
+  const [notes, setNotes] = useState('')
   const handleChangeName = (event) => {
     const assetVal = event.target.value
     setAssetName(assetVal)
@@ -35,6 +41,11 @@ export default function CreateAssets({ setModal, assets, txParamsJS }) {
     setUnitName(unitVal)
   }
 
+  const handleChangeNotes = (event) => {
+    const noteVal = event.target.value
+    setNotes(noteVal)
+  }
+
   const createAsset = () => {
     let _AlgoSigner = AlgoSigner || null
 
@@ -44,18 +55,16 @@ export default function CreateAssets({ setModal, assets, txParamsJS }) {
       unitName: unitName,
       total: +total,
       decimals: +decimal,
-      note: AlgoSigner.encoding.stringToByteArray('note'),
+      note: AlgoSigner.encoding.stringToByteArray(notes),
       suggestedParams: { ...txParamsJS },
     })
 
-    // Use the AlgoSigner encoding library to make the transactions base64
     const txn_b64 = AlgoSigner.encoding.msgpackToBase64(txn.toByte())
 
     _AlgoSigner
       .signTxn([{ txn: txn_b64 }])
       .then((d) => {
-        // signedTxs = d;
-        console.log('d', d)
+        getAssets()
       })
       .catch((e) => {})
       .finally(() => {})
@@ -74,6 +83,19 @@ export default function CreateAssets({ setModal, assets, txParamsJS }) {
     },
     note: {
       height: '20rem',
+    },
+    inputText: {
+      '& label.Mui-focused': {
+        color: '#03B68C',
+      },
+      '& .MuiInput-underline:after': {
+        borderBottomColor: '#03B68C',
+      },
+      '& .MuiOutlinedInput-root': {
+        '&.Mui-focused fieldset': {
+          borderColor: '#03B68C',
+        },
+      },
     },
   }))
   const classes = useStyles()
@@ -119,22 +141,6 @@ export default function CreateAssets({ setModal, assets, txParamsJS }) {
     },
   }))(Button)
 
-  const InputTextField = withStyles({
-    root: {
-      '& label.Mui-focused': {
-        color: '#03B68C',
-      },
-      '& .MuiInput-underline:after': {
-        borderBottomColor: '#03B68C',
-      },
-      '& .MuiOutlinedInput-root': {
-        '&.Mui-focused fieldset': {
-          borderColor: '#03B68C',
-        },
-      },
-    },
-  })(TextField)
-
   return (
     <>
       <Grid item xs={12}>
@@ -166,10 +172,10 @@ export default function CreateAssets({ setModal, assets, txParamsJS }) {
         </Grid>
         <Grid item xs={6}>
           <ListItem>
-            <InputTextField
+            <TextField
               // multiline={true}
               fullWidth
-              className={classes.margin}
+              className={classes.inputText}
               value={assetName}
               onChange={handleChangeName}
               label="Name*"
@@ -180,10 +186,10 @@ export default function CreateAssets({ setModal, assets, txParamsJS }) {
         </Grid>
         <Grid item xs={6}>
           <ListItem>
-            <InputTextField
+            <TextField
               multiline={true}
               fullWidth
-              className={classes.margin}
+              className={classes.inputText}
               onChange={handleChangeUnitName}
               label="Unit name*"
               variant="outlined"
@@ -194,10 +200,10 @@ export default function CreateAssets({ setModal, assets, txParamsJS }) {
         </Grid>
         <Grid item xs={6}>
           <ListItem>
-            <InputTextField
+            <TextField
               multiline={true}
               fullWidth
-              className={classes.margin}
+              className={classes.inputText}
               onChange={handleChangeTotal}
               label="Total supply*"
               variant="outlined"
@@ -208,10 +214,10 @@ export default function CreateAssets({ setModal, assets, txParamsJS }) {
         </Grid>
         <Grid item xs={6}>
           <ListItem>
-            <InputTextField
+            <TextField
               multiline={true}
               fullWidth
-              className={classes.margin}
+              className={classes.inputText}
               onChange={handleChangeDeciamal}
               label="Decimals"
               variant="outlined"
@@ -226,7 +232,7 @@ export default function CreateAssets({ setModal, assets, txParamsJS }) {
           </ListItem>
         </Grid>
         <Grid item xs={6}>
-          <div style={{ marginLeft: '12rem' }}>
+          <div style={{ marginLeft: '16rem' }}>
             <FormGroup>
               <FormControlLabel
                 control={
@@ -240,10 +246,10 @@ export default function CreateAssets({ setModal, assets, txParamsJS }) {
             </FormGroup>
           </div>
           <ListItem>
-            <InputTextField
+            <TextField
               multiline={true}
               fullWidth
-              className={classes.margin}
+              className={classes.inputText}
               InputProps={{
                 className: classes.input,
               }}
@@ -255,7 +261,7 @@ export default function CreateAssets({ setModal, assets, txParamsJS }) {
           </ListItem>
         </Grid>
         <Grid item xs={6}>
-          <div style={{ marginLeft: '12rem' }}>
+          <div style={{ marginLeft: '16rem' }}>
             <FormGroup>
               <FormControlLabel
                 control={
@@ -269,10 +275,10 @@ export default function CreateAssets({ setModal, assets, txParamsJS }) {
             </FormGroup>
           </div>
           <ListItem>
-            <InputTextField
+            <TextField
               multiline={true}
               fullWidth
-              className={classes.margin}
+              className={classes.inputText}
               InputProps={{
                 className: classes.input,
               }}
@@ -284,7 +290,7 @@ export default function CreateAssets({ setModal, assets, txParamsJS }) {
           </ListItem>
         </Grid>
         <Grid item xs={6}>
-          <div style={{ marginLeft: '12rem' }}>
+          <div style={{ marginLeft: '16rem' }}>
             <FormGroup>
               <FormControlLabel
                 control={
@@ -298,10 +304,10 @@ export default function CreateAssets({ setModal, assets, txParamsJS }) {
             </FormGroup>
           </div>
           <ListItem>
-            <InputTextField
+            <TextField
               multiline={true}
               fullWidth
-              className={classes.margin}
+              className={classes.inputText}
               InputProps={{
                 className: classes.input,
               }}
@@ -313,7 +319,7 @@ export default function CreateAssets({ setModal, assets, txParamsJS }) {
           </ListItem>
         </Grid>
         <Grid item xs={6}>
-          <div style={{ marginLeft: '12rem' }}>
+          <div style={{ marginLeft: '16rem' }}>
             <FormGroup>
               <FormControlLabel
                 control={
@@ -327,10 +333,10 @@ export default function CreateAssets({ setModal, assets, txParamsJS }) {
             </FormGroup>
           </div>
           <ListItem>
-            <InputTextField
+            <TextField
               multiline={true}
               fullWidth
-              className={classes.margin}
+              className={classes.inputText}
               InputProps={{
                 className: classes.input,
               }}
@@ -343,13 +349,15 @@ export default function CreateAssets({ setModal, assets, txParamsJS }) {
         </Grid>
         <Grid item xs={12}>
           <ListItem>
-            <InputTextField
+            <TextField
               multiline={true}
               fullWidth
-              className={classes.margin}
+              className={classes.inputText}
               InputProps={{
                 className: classes.input,
               }}
+              onChange={handleChangeNotes}
+              value={notes}
               label="Note"
               variant="outlined"
               id="custom-css-outlined-input"
@@ -360,7 +368,7 @@ export default function CreateAssets({ setModal, assets, txParamsJS }) {
           variant="contained"
           color="primary"
           style={{ cursor: 'pointer' }}
-          className={classes.margin}
+          className={classes.inputText}
           onClick={createAsset}
           InputProps={{
             className: classes.note,

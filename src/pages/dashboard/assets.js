@@ -11,26 +11,38 @@ import {
   TextField,
   Box,
   Typography,
-  Paper,
-  withStyles,
   makeStyles,
+  InputAdornment,
 } from '@material-ui/core'
 import SEO from 'components/seo'
 import { useRouter } from 'next/router'
-import { getAddressParams, getSelectedAccount } from 'function/HelperFunction'
+import { CustomMessage, getSelectedAccount } from 'function/HelperFunction'
 import CreateAssets from 'components/createAssets'
+import QRCode from 'react-qr-code'
+import HighlightOffIcon from '@material-ui/icons/HighlightOff'
+import Swal from 'sweetalert2'
+import CopyToClipboard from 'react-copy-to-clipboard'
+import SearchIcon from '@material-ui/icons/Search'
+import { useSnackbar } from 'notistack'
 
 export default function Assets() {
   const router = useRouter()
+  const { enqueueSnackbar } = useSnackbar()
   const [assets, setAssets] = useState([])
   const [amount, setAmount] = useState(0)
   const [address, setAddress] = useState('')
-  const [searchValue, setSearchValue] = useState('Name')
+  const [searchValue, setSearchValue] = useState('')
   const [createdAssets, setCreatedAssets] = useState([])
   const [txParamsJS, setTxParamsJS] = useState()
   const [open, setOpen] = useState(false)
+  const [QRopen, setQROpen] = useState(false)
+  const [loading, setloading] = useState(false)
   const handleOpenModal = () => setOpen(true)
   const handleCloseModal = () => setOpen(false)
+  const showQRCode = () => setQROpen(true)
+  const hideQRCode = () => {
+    setQROpen(!QRopen)
+  }
 
   const useStyles = makeStyles((theme) => ({
     root: {
@@ -39,6 +51,24 @@ export default function Assets() {
     },
     margin: {
       margin: theme.spacing(1),
+    },
+    paper: {
+      backgroundColor: theme.palette.background.paper,
+      boxShadow: theme.shadows[5],
+      padding: theme.spacing(2, 4, 3),
+    },
+    inputText: {
+      '& label.Mui-focused': {
+        color: '#03B68C',
+      },
+      '& .MuiInput-underline:after': {
+        borderBottomColor: '#03B68C',
+      },
+      '& .MuiOutlinedInput-root': {
+        '&.Mui-focused fieldset': {
+          borderColor: '#03B68C',
+        },
+      },
     },
   }))
   const classes = useStyles()
@@ -55,9 +85,32 @@ export default function Assets() {
     p: 4,
   }
 
+  const QRstyle = {
+    position: 'absolute',
+    top: '48%',
+    left: '50%',
+    width: '25%',
+    outerHeight: 'auto',
+    transform: 'translate(-50%, -50%)',
+    bgcolor: '#ffff',
+    boxShadow: 24,
+    p: 4,
+  }
+
   useEffect(() => {
     getAssets()
-  }, [])
+    if (loading) {
+      Swal.fire({
+        title: 'Waiting for confirmation...',
+        html: 'Please wait...',
+        allowEscapeKey: false,
+        allowOutsideClick: true,
+        didOpen: () => {
+          Swal.showLoading()
+        },
+      })
+    }
+  }, [loading])
 
   const getAssets = () => {
     axios.get(`${GET_ASSETS}/${getSelectedAccount()}`).then((response) => {
@@ -107,45 +160,13 @@ export default function Assets() {
       })
   }
 
-  const InputTextField = withStyles({
-    root: {
-      '& label.Mui-focused': {
-        color: '#03B68C',
-      },
-      '& .MuiInput-underline:after': {
-        borderBottomColor: '#03B68C',
-      },
-      '& .MuiOutlinedInput-root': {
-        '&.Mui-focused fieldset': {
-          borderColor: '#03B68C',
-        },
-      },
-    },
-  })(TextField)
-
-  const copyText = () => {
-    const area = document.getElementById('#clipboard-area')
-    area.select()
-    document.execCommand('copy')
-  }
-
-  // function handleCopyTextFromArea() {
-  //   const area = document.querySelector('#clipboard-area')
-  //   area.select()
-  //   document.execCommand('copy')
-  // }
   const handleSearch = (event) => {
     const searchString = event.target.value
     setSearchValue(searchString)
-    // const filterValue = searchString
-    //   ? createdAssets.filter((asset) =>
-    //       asset.params.name
-    //         .toString()
-    //         .toLowerCase()
-    //         .includes(searchString.toLocaleLowerCase())
-    //     )
-    //   : createdAssets
-    // setCreatedAssets(filterValue)
+  }
+
+  const showCopyText = () => {
+    CustomMessage('Address copied', 'success', enqueueSnackbar)
   }
 
   return (
@@ -162,22 +183,20 @@ export default function Assets() {
                 />
               </div>
               <div className="header-navigation-actions">
-                <fieldset>
-                  <div className="MuiButton-outlinedPrimary">
-                    <label>
-                      <input type="radio" name="radio" checked />
-                      <span>TestNet</span>
-                    </label>
-                    <label>
-                      <input type="radio" name="radio" />
-                      <span>BetaNet</span>
-                    </label>
-                    <label>
-                      <input type="radio" name="radio" />
-                      <span>MainNet</span>
-                    </label>
-                  </div>
-                </fieldset>
+                <div className="MuiButton-outlinedPrimary">
+                  <label>
+                    <input type="radio" name="radio" checked />
+                    <span>TestNet</span>
+                  </label>
+                  <label>
+                    <input type="radio" name="radio" />
+                    <span>BetaNet</span>
+                  </label>
+                  <label>
+                    <input type="radio" name="radio" />
+                    <span>MainNet</span>
+                  </label>
+                </div>
               </div>
             </div>
           </div>
@@ -196,20 +215,25 @@ export default function Assets() {
                           />
                           &nbsp;&nbsp;{' '}
                           <span id="clipboard-area">{address}</span>
+                          <CopyToClipboard text={address}>
+                            <span
+                              onClick={showCopyText}
+                              className="action jss122"
+                              id="cursor"
+                              title="Copy Address">
+                              <svg
+                                class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall"
+                                focusable="false"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true">
+                                <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm-1 4H8c-1.1 0-1.99.9-1.99 2L6 21c0 1.1.89 2 1.99 2H19c1.1 0 2-.9 2-2V11l-6-6zM8 21V7h6v5h5v9H8z"></path>
+                              </svg>
+                            </span>
+                          </CopyToClipboard>
                           <span
+                            onClick={showQRCode}
                             className="action jss121 jss122"
-                            title="Copy Address"
-                            onClick={copyText}>
-                            <svg
-                              class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall"
-                              focusable="false"
-                              viewBox="0 0 24 24"
-                              aria-hidden="true">
-                              <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm-1 4H8c-1.1 0-1.99.9-1.99 2L6 21c0 1.1.89 2 1.99 2H19c1.1 0 2-.9 2-2V11l-6-6zM8 21V7h6v5h5v9H8z"></path>
-                            </svg>
-                          </span>
-                          <span
-                            className="action jss121 jss122"
+                            id="cursor"
                             title="Show QR code">
                             <svg
                               className="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall"
@@ -219,6 +243,26 @@ export default function Assets() {
                               <path d="M3 5v4h2V5h4V3H5c-1.1 0-2 .9-2 2zm2 10H3v4c0 1.1.9 2 2 2h4v-2H5v-4zm14 4h-4v2h4c1.1 0 2-.9 2-2v-4h-2v4zm0-16h-4v2h4v4h2V5c0-1.1-.9-2-2-2z"></path>
                             </svg>
                           </span>
+                          <Modal
+                            open={QRopen}
+                            onClose={hideQRCode}
+                            aria-labelledby="transition-modal-title"
+                            aria-describedby="transition-modal-description">
+                            <Box sx={QRstyle} borderRadius="3%">
+                              <div
+                                onClick={hideQRCode}
+                                style={{
+                                  marginLeft: '15rem',
+                                  marginBottom: '2rem',
+                                  cursor: 'pointer',
+                                }}>
+                                <HighlightOffIcon
+                                  style={{ color: '#03B68C' }}
+                                />
+                              </div>
+                              <QRCode value={address} />
+                            </Box>
+                          </Modal>
                           <div className="balance">
                             <svg
                               className="MuiSvgIcon-root MuiSvgIcon-colorPrimary"
@@ -282,164 +326,6 @@ export default function Assets() {
                         onClose={handleCloseModal}
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description">
-                        {/* <div
-                          tabindex="-1"
-                          role="dialog"
-                          aria-hidden="true">
-                          <div className="modal-dialog modal-lg">
-                            <div className="modal-content">
-                              <div className="modal-header">
-                                <button
-                                  onClick={handleCloseModal}
-                                  type="button"
-                                  className="btn-close"
-                                  data-bs-dismiss="modal"></button>
-                              </div>
-                              <div className="modal-body scroll">
-                                <div className="col-xl-12 col-lg-12">
-                                  <div className="card">
-                                    <div className="card-header">
-                                      <h3 className="card-title">
-                                        Asset Details
-                                      </h3>
-                                    </div>
-                                    <div className="card-body">
-                                      <div className="basic-form">
-                                        <form>
-                                          <div className="row">
-                                            <div className="mb-3 col-md-6">
-                                              <input
-                                                id="name"
-                                                type="text"
-                                                className="form-control"
-                                                placeholder="Name"
-                                              />
-                                            </div>
-                                            <div className="mb-3 col-md-6">
-                                              <input
-                                                id="unit-name"
-                                                type="text"
-                                                className="form-control"
-                                                placeholder="Unit Name"
-                                              />
-                                            </div>
-                                            <div className="mb-3 col-md-6">
-                                              <input
-                                                id="total"
-                                                type="text"
-                                                className="form-control"
-                                                placeholder="Total Supply"
-                                              />
-                                            </div>
-                                            <div className="mb-3 col-md-6">
-                                              <input
-                                                id="decimal"
-                                                type="text"
-                                                className="form-control"
-                                                placeholder="Decimal"
-                                              />
-                                            </div>
-                                            <div className="mb-3 col-md-6">
-                                              <input
-                                                id="asset-url"
-                                                type="text"
-                                                className="form-control"
-                                                placeholder="url"
-                                              />
-                                            </div>
-                                            <div className="mb-3 col-md-6">
-                                              <input
-                                                id="asset-hash"
-                                                type="text"
-                                                className="form-control"
-                                                placeholder="Metadata Hash"
-                                              />
-                                            </div>
-                                          </div>
-                                          <div className="card-header">
-                                            <h3 className="card-title">
-                                              Asset Management
-                                            </h3>
-                                          </div>
-                                          <div className="row">
-                                            <div className="mb-3 col-md-6">
-                                              <label className="toggle">
-                                                <input
-                                                  type="checkbox"
-                                                  checked
-                                                />{' '}
-                                                <span></span>
-                                              </label>
-                                              <input
-                                                type="text"
-                                                className="form-control"
-                                                placeholder="Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-							                    	 Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
-                                              />
-                                            </div>
-                                            <div className="mb-3 col-md-6">
-                                              <label className="toggle">
-                                                <input
-                                                  type="checkbox"
-                                                  checked
-                                                />{' '}
-                                                <span></span>
-                                              </label>
-                                              <input
-                                                type="text"
-                                                className="form-control"
-                                                placeholder="Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-							                    	 Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
-                                              />
-                                            </div>
-                                            <div className="mb-3 col-md-6">
-                                              <label className="toggle">
-                                                <input
-                                                  type="checkbox"
-                                                  checked
-                                                />{' '}
-                                                <span></span>
-                                              </label>
-                                              <input
-                                                type="text"
-                                                className="form-control"
-                                                placeholder="Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-							                    	 Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
-                                              />
-                                            </div>
-                                            <div className="mb-3 col-md-6">
-                                              <label className="toggle">
-                                                <input
-                                                  type="checkbox"
-                                                  checked
-                                                />{' '}
-                                                <span></span>
-                                              </label>
-                                              <input
-                                                type="text"
-                                                className="form-control"
-                                                placeholder="Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-							                        	 Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
-                                              />
-                                            </div>
-                                          </div>
-                                        </form>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="modal-footer">
-                                  <button
-                                    onClick={createAssets}
-                                    type="button"
-                                    className="btn btn-primary">
-                                    <i class="fas fa-plus"></i>&nbsp;Create
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div> */}
                         <Box sx={style} borderRadius="3%">
                           <Typography
                             id="modal-modal-title"
@@ -451,30 +337,32 @@ export default function Assets() {
                               txParamsJS={txParamsJS}
                               getAssets={getAssets}
                               address={address}
+                              setloading={setloading}
                             />
                           </Typography>
                         </Box>
                       </Modal>
 
-                      {/* modal */}
                       <div className="content-header-actions">
-                        <div className="search">
-                          <InputTextField
-                            fullWidth
-                            className={classes.margin}
-                            label="Note"
-                            variant="outlined"
-                            value="Name"
-                            id="custom-css-outlined-input"
-                            onChange={handleSearch}
-                          />
-                          <button type="submit">
-                            <i class="ph-magnifying-glass-bold"></i>
-                          </button>
-                        </div>
+                        <TextField
+                          fullWidth
+                          className={classes.inputText}
+                          label="Search asset"
+                          variant="outlined"
+                          placeholder="Name"
+                          value={searchValue}
+                          id="custom-css-outlined-input"
+                          onChange={handleSearch}
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="end">
+                                {/* <SearchIcon /> */}
+                              </InputAdornment>
+                            ),
+                          }}
+                        />
                       </div>
                     </div>
-                    {/* content */}
 
                     <div className="content">
                       <div className="content-main">

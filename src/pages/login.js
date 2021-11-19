@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import algosigner from '../assets/image/algosigner.png'
-import wallet from '../assets/image/wallet.png'
-import algorand from '../assets/image/algorand mobile wallet.png'
 import theme from 'theme'
 import { ThemeProvider } from '@theme-ui/core'
 import { StickyProvider } from 'contexts/app/app.provider'
@@ -15,21 +13,74 @@ import {
 } from 'function/HelperFunction'
 import { useSnackbar } from 'notistack'
 import { useRouter } from 'next/router'
-import { Modal } from '@material-ui/core'
+import { makeStyles, Modal } from '@material-ui/core'
+import WalletModal from 'components/walletModal'
+import HighlightOffIcon from '@material-ui/icons/HighlightOff'
+import Paper from '@material-ui/core/Paper'
+import Button from '@material-ui/core/Button'
+import Typography from '@material-ui/core/Typography'
+import { Grid } from '@material-ui/core'
+import Radio from '@material-ui/core/Radio'
+import RadioGroup from '@material-ui/core/RadioGroup'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import FormControl from '@material-ui/core/FormControl'
 
 export default function Login() {
   const [walletValue, setWalletValue] = useState('')
   const [isWalletPopupDisplay, setisWalletPopupDisplay] = useState(false)
   const [address, setAddress] = useState([])
   const [open, setOpen] = useState(false)
+  const [walletOpen, setWalletOpen] = useState(false)
 
   const handleCloseModal = () => setOpen(false)
   const { enqueueSnackbar } = useSnackbar()
   const history = useRouter()
 
-  useEffect(() => {
-    // getAccount()
-  }, [])
+  const useStyles = makeStyles({
+    root: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: '100%',
+      height: '100vh',
+    },
+    Paper: {
+      width: '100%',
+      height: '100%',
+      paddingTop: '22%',
+      paddingBottom: '15%',
+      borderRadius: '15px',
+    },
+    innerContainer: {
+      width: '100%',
+      height: '100%',
+    },
+    heading: {
+      fontWeight: '600',
+      fontSize: '26px',
+      marginBottom: '60px',
+    },
+    Button: {
+      textTransform: 'capitalize',
+      background: 'linear-gradient(56.21deg, #0BB68C -43.1%, #60DD8B 132.97%)',
+      marginTop: '60px',
+      color: 'white',
+      paddingTop: '10px',
+      paddingBottom: '10px',
+      paddingLeft: '20px',
+      paddingRight: '20px',
+      fontWeight: 'bold',
+      fontSize: '18px',
+      borderRadius: '10px',
+    },
+    radio: {
+      color: '#03B68C',
+      '&$checked': {
+        color: '#03B68C',
+      },
+    },
+  })
+  const classes = useStyles()
 
   const handleChange = (event) => {
     const walletValue = event.target.value
@@ -78,6 +129,7 @@ export default function Login() {
     if (!walletValue) {
       CustomMessage('Please select wallet...', 'error', enqueueSnackbar)
     } else {
+      setWalletOpen(true)
       try {
         if (AlgoSigner) {
           setisWalletPopupDisplay(true)
@@ -99,149 +151,71 @@ export default function Login() {
       <StickyProvider>
         <Layout>
           <SEO title="Digital-Q" />
-          <div className="content-body">
-            <div className="container-fluid wider">
-              <div className="row">
-                <div className="col-lg-12">
-                  <div className="card login-forms">
-                    <div className="card-body text-center ai-icon  text-primary">
-                      <h3 className="font-h3">Connect Wallet</h3>
-                      <div className="basic-form">
-                        <form>
-                          <div className="mb-3 mb-0">
-                            <label className="radio-inline me-3">
-                              <input
-                                type="radio"
-                                name="optradio"
-                                onChange={handleChange}
-                                value="TestNet"
-                              />{' '}
-                              TestNet{' '}
-                            </label>
-                            <label className="radio-inline me-3">
-                              <input
-                                type="radio"
-                                name="optradio"
-                                onChange={handleChange}
-                                value="BetaNet"
-                              />{' '}
-                              BetaNet{' '}
-                            </label>
-                            <label className="radio-inline me-3">
-                              <input
-                                type="radio"
-                                name="optradio"
-                                onChange={handleChange}
-                                value="MainNet"
-                              />{' '}
-                              MainNet{' '}
-                            </label>
-                          </div>
-                        </form>
-                      </div>
+          <div>
+            <Grid container className={classes.root}>
+              <Grid item xs={8} md={4}>
+                <Paper elevation={4} className={classes.Paper}>
+                  <Grid container direction="column" alignItems="center">
+                    <Typography
+                      variant="h4"
+                      component="h1"
+                      gutterBottom
+                      className={classes.heading}>
+                      Connect wallet
+                    </Typography>
 
-                      <button
-                        type="button"
-                        onClick={handleValue}
-                        className="btn btn-primary mb-2"
-                        data-toggle="modal"
-                        data-target="#exampleModal">
-                        <i class="fas fa-link"></i> Connect
-                      </button>
-                      <div
-                        style={{
-                          display: isWalletPopupDisplay ? 'block' : 'none',
-                        }}>
-                        <div
-                          className="modal fade"
-                          id={walletValue && 'exampleModal'}>
-                          <div
-                            className="modal-dialog modal-dialog-centered"
-                            role="document">
-                            <div className="modal-content">
-                              <div className="modal-header">
-                                <button
-                                  type="button"
-                                  className="btn-close MuiButtonBase-root MuiIconButton-root MuiIconButton-colorPrimary"
-                                  data-dismiss="modal"></button>
-                              </div>
-                              <div className="modal-body">
-                                <div className="logo-title">
-                                  <i class="fas fa-link"></i>
-                                  <h3> Connect Wallet</h3>
-                                  <h5 className="color-h5">
-                                    to start using Algodesk
-                                  </h5>
+                    <Grid
+                      item
+                      container
+                      direction="row"
+                      justifyContent="center"
+                      xs={12}
+                      md={12}>
+                      <FormControl component="fieldset">
+                        <RadioGroup row aria-label="wallet" name="wallet">
+                          <FormControlLabel
+                            value="TestNet"
+                            control={
+                              <Radio color="default" onChange={handleChange} />
+                            }
+                            label="TestNet"
+                          />
+                          <FormControlLabel
+                            value="male"
+                            control={<Radio color="default" />}
+                            label="BetaNet"
+                          />
+                          <FormControlLabel
+                            value="other"
+                            control={
+                              <Radio color="default" onChange={handleChange} />
+                            }
+                            label="MainNet"
+                          />
+                        </RadioGroup>
+                      </FormControl>
+                    </Grid>
 
-                                  <div className="body home-container">
-                                    <div className="AlgoSigner">
-                                      <img
-                                        className="logo"
-                                        src={algosigner}
-                                        alt="logo"
-                                      />
-                                      <span className="name">AlgoSigner</span>
-                                      <svg
-                                        className="MuiSvgIcon-root MuiSvgIcon-fontSizeLarge"
-                                        focusable="false"
-                                        viewBox="0 0 24 24"
-                                        aria-hidden="true">
-                                        <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z"></path>
-                                      </svg>
-                                    </div>
-                                    <div
-                                      className="AlgoSigner"
-                                      onClick={connectWallet}>
-                                      <img
-                                        className="logo"
-                                        src={wallet}
-                                        alt="logo"
-                                      />
-                                      <span className="name">AlgoSigner</span>
-                                      <svg
-                                        className="MuiSvgIcon-root MuiSvgIcon-fontSizeLarge"
-                                        focusable="false"
-                                        viewBox="0 0 24 24"
-                                        aria-hidden="true">
-                                        <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z"></path>
-                                      </svg>
-                                    </div>
-                                    <div className="AlgoSigner">
-                                      <img
-                                        className="logo"
-                                        src={algorand}
-                                        alt="logo"
-                                      />
-                                      <span className="name">AlgoSigner</span>
-                                      <svg
-                                        className="MuiSvgIcon-root MuiSvgIcon-fontSizeLarge"
-                                        focusable="false"
-                                        viewBox="0 0 24 24"
-                                        aria-hidden="true">
-                                        <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z"></path>
-                                      </svg>
-                                    </div>
-                                  </div>
-                                </div>
-
-                                <div className="modal-footer">
-                                  <div className="footer">
-                                    <h6 className="MuiTypography-root">
-                                      By connecting, I accept Algodesk Terms of
-                                      Service
-                                    </h6>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+                    <Button
+                      size="large"
+                      className={classes.Button}
+                      variant="contained"
+                      onClick={handleValue}
+                      startIcon={
+                        <i
+                          className="fas fa-link"
+                          style={{
+                            transform: 'rotate(90deg)',
+                            fontSize: 'medium',
+                          }}></i>
+                      }>
+                      {' '}
+                      Connect wallet
+                    </Button>
+                  </Grid>
+                </Paper>
+              </Grid>
+            </Grid>
           </div>
 
           <Modal
@@ -259,12 +233,10 @@ export default function Login() {
                       <img className="logo" src={algosigner} alt="logo" />
                       <span className="name">AlgoSigner</span>
                     </h5>
-
-                    <button
-                      type="button"
+                    <HighlightOffIcon
+                      style={{ color: '#03B68C' }}
                       onClick={handleCloseModal}
-                      className="btn-close"
-                      data-bs-dismiss="modal"></button>
+                    />
                   </div>
                   <div className="modal-body">
                     <div className="param assets">
@@ -284,6 +256,16 @@ export default function Login() {
                 </div>
               </div>
             </div>
+          </Modal>
+
+          <Modal
+            open={walletOpen}
+            aria-labelledby="simple-modal-title"
+            aria-describedby="simple-modal-description">
+            <WalletModal
+              connectWallet={connectWallet}
+              setWalletOpen={setWalletOpen}
+            />
           </Modal>
         </Layout>
       </StickyProvider>

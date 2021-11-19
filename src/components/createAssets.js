@@ -10,16 +10,15 @@ import {
 import { withStyles, makeStyles } from '@material-ui/core/styles'
 import { useEffect, useState } from 'react'
 import HighlightOffIcon from '@material-ui/icons/HighlightOff'
-import InfoRoundedIcon from '@material-ui/icons/InfoRounded'
 import { getSelectedAccount, getSelectedWallet } from 'function/HelperFunction'
 import Swal from 'sweetalert2'
 
 export default function CreateAssets({
   setModal,
-  assets,
   txParamsJS,
   getAssets,
   address,
+  setloading,
 }) {
   const [assetName, setAssetName] = useState('')
   const [decimal, setDecimal] = useState('')
@@ -31,7 +30,6 @@ export default function CreateAssets({
   const [recerve, setRecerve] = useState(address)
   const [freeze, setFreeze] = useState(address)
   const [clawBack, setClawBack] = useState(address)
-  const [loading, setLoading] = useState(false)
 
   const handleChangeManager = (event) => {
     const managerVal = event.target.value
@@ -72,11 +70,7 @@ export default function CreateAssets({
     setNotes(noteVal)
   }
 
-  useEffect(() => {
-    if (loading) {
-      Swal.showLoading()
-    }
-  }, [])
+  useEffect(() => {}, [])
 
   const createAsset = () => {
     let _AlgoSigner = AlgoSigner || null
@@ -122,7 +116,7 @@ export default function CreateAssets({
   }
 
   const checkTransaction = (txId) => {
-    setLoading(true)
+    setloading(true)
     let _AlgoSigner = AlgoSigner || null
     _AlgoSigner
       .algod({
@@ -130,7 +124,7 @@ export default function CreateAssets({
         path: '/v2/transactions/pending/' + `${txId}`,
       })
       .then((d) => {
-        setLoading(false)
+        setloading(false)
         Swal.fire({
           title: 'Transaction successfull',
           text: txId,

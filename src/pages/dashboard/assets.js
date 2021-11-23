@@ -129,13 +129,11 @@ export default function Assets() {
     const port = ''
 
     const algodClient = new algosdk.Algodv2(token, server, port)
-    console.log('algodClient', algodClient)
 
     algodClient
       .healthCheck()
       .do()
       .then((d) => {
-        console.log('d', d)
         getParams()
       })
       .catch((e) => {
@@ -152,7 +150,6 @@ export default function Assets() {
       .getTransactionParams()
       .do()
       .then((d) => {
-        console.log(d)
         setTxParamsJS(d)
       })
       .catch((e) => {
@@ -211,7 +208,7 @@ export default function Assets() {
                           <img
                             src={CodeImg}
                             alt="address"
-                            style={{ width: '30px' }}
+                            className="codeImg"
                           />
                           &nbsp;&nbsp;{' '}
                           <span id="clipboard-area">{address}</span>
@@ -249,16 +246,8 @@ export default function Assets() {
                             aria-labelledby="transition-modal-title"
                             aria-describedby="transition-modal-description">
                             <Box sx={QRstyle} borderRadius="3%">
-                              <div
-                                onClick={hideQRCode}
-                                style={{
-                                  marginLeft: '15rem',
-                                  marginBottom: '2rem',
-                                  cursor: 'pointer',
-                                }}>
-                                <HighlightOffIcon
-                                  style={{ color: '#03B68C' }}
-                                />
+                              <div onClick={hideQRCode} className="qrCode">
+                                <HighlightOffIcon className="closeIcon" />
                               </div>
                               <QRCode value={address} />
                             </Box>
@@ -271,7 +260,7 @@ export default function Assets() {
                               aria-hidden="true">
                               <path
                                 d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"
-                                style={{ color: '#03B68C' }}></path>
+                                className="closeIcon"></path>
                             </svg>
                             {amount / 1000000}
                           </div>
@@ -282,7 +271,7 @@ export default function Assets() {
                           <span
                             onClick={() => router.push('/login')}
                             className="action jss36"
-                            style={{ float: 'right' }}
+                            id="logout"
                             title="Logout">
                             <svg
                               className="MuiSvgIcon-root MuiSvgIcon-colorSecondary MuiSvgIcon-fontSizeLarge"
@@ -291,10 +280,7 @@ export default function Assets() {
                               aria-hidden="true">
                               <path
                                 d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"
-                                style={{
-                                  color: '#V',
-                                  cursor: 'pointer',
-                                }}></path>
+                                className="logoutSvg"></path>
                             </svg>
                           </span>
                         </div>
@@ -308,7 +294,7 @@ export default function Assets() {
                         className="btn btn-primary mb-2"
                         data-bs-toggle="modal"
                         data-bs-target=".bd-example-modal-lg"
-                        style={{ padding: '13px 30px 13px 30px' }}>
+                        id="assetIcon">
                         <i class="fas fa-plus"></i>&nbsp;Create Asset
                       </button>
                       <input
@@ -372,9 +358,7 @@ export default function Assets() {
                             createdAssets.map((asset, index) => (
                               <div className="col-lg-6 col-md-6" key={index}>
                                 <div className="card-body roots">
-                                  <div
-                                    className="assets"
-                                    style={{ display: 'flex' }}>
+                                  <div className="assets" id="assetTable">
                                     <div className="col-lg-10 col-md-10 asset-id">
                                       <p> ID: {asset.index}</p>
                                     </div>
@@ -397,9 +381,7 @@ export default function Assets() {
                                     </div>
                                   </div>
 
-                                  <div
-                                    className="assets"
-                                    style={{ display: 'flex' }}>
+                                  <div className="assets" id="assetTable">
                                     <div className="col-lg-6 col-md-6 assets jss38">
                                       <p>{asset.params.name}</p>
                                     </div>
@@ -412,9 +394,7 @@ export default function Assets() {
                                     </div>
                                   </div>
 
-                                  <div
-                                    className="assets"
-                                    style={{ display: 'flex' }}>
+                                  <div className="assets" id="assetTable">
                                     <div className="col-lg-6 col-md-6 assets">
                                       <div className="param assets">
                                         <div className="key assets">
@@ -456,9 +436,7 @@ export default function Assets() {
                                     </div>
                                   </div>
 
-                                  <div
-                                    className="assets"
-                                    style={{ display: 'flex' }}>
+                                  <div className="assets" id="assetTable">
                                     <div className="col-lg-6 col-md-6 assets">
                                       <div className="param assets">
                                         <div className="key assets">Freeze</div>

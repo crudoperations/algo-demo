@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Router from 'next/router'
 import { initGA, logPageView } from 'analytics'
 import 'react-multi-carousel/lib/styles.css'
@@ -9,6 +9,12 @@ import '../pages/App.css'
 import Head from 'next/head'
 import { SnackbarProvider } from 'notistack'
 export default function CustomApp({ Component, pageProps }) {
+  const [counter, setCounter] = useState(0)
+
+  useEffect(() => {
+    setCounter(counter + 1)
+  }, [])
+
   useEffect(() => {
     initGA()
     logPageView()
@@ -17,7 +23,7 @@ export default function CustomApp({ Component, pageProps }) {
 
   return (
     <>
-      <Head>
+      <Head data-counter={counter}>
         <link
           rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"

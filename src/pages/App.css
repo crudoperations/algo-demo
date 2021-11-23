@@ -1748,3 +1748,126 @@ input[type='radio']:checked:after {
 .Mui-checked{
   color:#03B68C !important;
 }
+.assetList {
+  font-size: 20px;
+  font-weight: 700;
+}
+.closeIcon {
+  color: #03B68C;
+}
+.assetModal {
+ margin-left: 37rem;
+ margin-bottom: 2rem;
+ cursor: pointer;
+}
+
+.assetDetail{
+          overflow: scroll;
+          overflow-x: clip;
+          max-height: 400px;
+}
+
+.assetSwitch {
+  margin-left: 16rem;
+}
+
+.walletModal {
+  margin-top: 5rem;
+}
+
+
+.walletGrid {
+  background: white;
+  height: 400px;
+  border-radius: 10px;
+}
+
+
+.walletFlex {
+  height: 10%;
+  color: #03B68C;
+}
+
+
+.walletCloseBtn {
+  margin-right: 2rem;
+  cursor: pointer;
+}
+
+
+.walletBox {
+  height: 90%;
+  overflow-x: hidden;
+}
+
+
+.walletLogo {
+  height: 30%;
+}
+
+
+.walletTable {
+  height: 50%;
+}
+
+
+.walletImg {
+height: 30px;
+width: 30px;
+}
+
+
+.arrowIcon {
+height: 20px;
+width: 20px;
+}
+
+
+.connectWallet {
+  font-weight: bold;
+  font-size: 1.4rem;
+}
+
+
+.walletStart {
+  color: rgb(0, 0, 0, 0.54);
+}
+
+
+.codeImg {
+  width: 30px;
+}
+
+
+#connectBtn {
+  transform: rotate(90deg);
+  font-size: medium;
+}
+
+
+.qrCode {
+  margin-left: 15rem;
+  margin-bottom: 2rem;
+  cursor: pointer;
+}
+
+
+.logout {
+  float: right;
+}
+
+
+.logoutSvg {
+  color: '#V';
+  cursor: pointer;
+}
+
+
+#assetIcon {
+  padding: 13px 30px 13px 30px;
+}
+
+
+#assetTable{
+  display: flex;
+}

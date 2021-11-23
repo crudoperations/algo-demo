@@ -91,7 +91,6 @@ export default function CreateAssets({
       .signTxn([{ txn: txn_b64 }])
       .then((d) => {
         sendSignedTransaction(d[0].blob)
-        console.log('111', d)
         setModal(false)
         getAssets()
       })
@@ -108,7 +107,6 @@ export default function CreateAssets({
       })
       .then((d) => {
         checkTransaction(d.txId)
-        console.log('222', d)
       })
       .catch((e) => {
         console.error(e)
@@ -157,6 +155,7 @@ export default function CreateAssets({
       height: '20rem',
     },
     inputText: {
+      cursor: 'pointer',
       '& label.Mui-focused': {
         color: '#03B68C',
       },
@@ -238,14 +237,8 @@ export default function CreateAssets({
     <>
       <Grid item xs={12}>
         <ListItem>
-          <div
-            style={{
-              marginLeft: '37rem',
-              marginBottom: '2rem',
-              cursor: 'pointer',
-            }}
-            onClick={handleClose}>
-            <HighlightOffIcon style={{ color: '#03B68C' }} />
+          <div className="assetModal" onClick={handleClose}>
+            <HighlightOffIcon className="closeIcon" />
           </div>
         </ListItem>
       </Grid>
@@ -253,15 +246,9 @@ export default function CreateAssets({
         container
         spacing={24}
         justifyContent="center"
-        style={{
-          overflowY: 'scroll',
-          overflowX: 'clip',
-          maxHeight: '400px',
-        }}>
+        className="assetDetail">
         <Grid item xs={12}>
-          <ListItem style={{ fontSize: '20px', fontWeight: '700' }}>
-            Asset details
-          </ListItem>
+          <ListItem className="assetList">Asset details</ListItem>
         </Grid>
         <Grid item xs={6}>
           <ListItem>
@@ -320,12 +307,10 @@ export default function CreateAssets({
           </ListItem>
         </Grid>
         <Grid item xs={12}>
-          <ListItem style={{ fontSize: '20px', fontWeight: '700' }}>
-            Asset management
-          </ListItem>
+          <ListItem className="assetList">Asset management</ListItem>
         </Grid>
         <Grid item xs={6}>
-          <div style={{ marginLeft: '16rem' }}>
+          <div className="assetSwitch">
             <FormGroup>
               <FormControlLabel
                 control={
@@ -356,7 +341,7 @@ export default function CreateAssets({
           </ListItem>
         </Grid>
         <Grid item xs={6}>
-          <div style={{ marginLeft: '16rem' }}>
+          <div className="assetSwitch">
             <FormGroup>
               <FormControlLabel
                 control={
@@ -387,7 +372,7 @@ export default function CreateAssets({
           </ListItem>
         </Grid>
         <Grid item xs={6}>
-          <div style={{ marginLeft: '16rem' }}>
+          <div className="assetSwitch">
             <FormGroup>
               <FormControlLabel
                 control={
@@ -418,7 +403,7 @@ export default function CreateAssets({
           </ListItem>
         </Grid>
         <Grid item xs={6}>
-          <div style={{ marginLeft: '16rem' }}>
+          <div className="assetSwitch">
             <FormGroup>
               <FormControlLabel
                 control={
@@ -468,7 +453,6 @@ export default function CreateAssets({
         <CreateButton
           variant="contained"
           color="primary"
-          style={{ cursor: 'pointer' }}
           className={classes.inputText}
           onClick={createAsset}
           InputProps={{

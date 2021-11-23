@@ -20,14 +20,12 @@ export default function WalletModal({ connectWallet, setWalletOpen }) {
       container
       justifyContent="center"
       alignItems="center"
-      style={{
-        marginTop: '5rem',
-      }}>
+      className="walletModal">
       <Grid
         item
         md={3}
         spacing={5}
-        style={{ background: 'white', height: '400px', borderRadius: '10px' }}
+        className="walletGrid"
         justifyContent="center"
         alignItems="center">
         <Grid
@@ -36,19 +34,13 @@ export default function WalletModal({ connectWallet, setWalletOpen }) {
           container
           justifyContent="flex-end"
           alignItems="center"
-          style={{ height: '10%', color: '#03B68C' }}>
-          <Grid
-            style={{ marginRight: '2rem', cursor: 'pointer' }}
-            onClick={modalClose}>
+          className="walletFlex">
+          <Grid className="walletCloseBtn" onClick={modalClose}>
             <HighlightOffIcon />
           </Grid>
         </Grid>
-        <Grid
-          item
-          container
-          md={12}
-          style={{ height: '90%', overflowX: 'hidden' }}>
-          <Grid item md={12} container style={{ height: '30%' }}>
+        <Grid item container md={12} className="walletBox">
+          <Grid item md={12} container className="walletLogo">
             <Grid
               item
               md={12}
@@ -62,17 +54,13 @@ export default function WalletModal({ connectWallet, setWalletOpen }) {
               </div>
             </Grid>
             <Grid item md={12} container justifyContent="center">
-              <Grid style={{ fontWeight: 'bold', fontSize: '1.4rem' }}>
-                Connect wallet
-              </Grid>
+              <Grid className="connectWallet">Connect wallet</Grid>
             </Grid>
             <Grid item md={12} container justifyContent="center">
-              <Grid style={{ color: 'rgba(0, 0, 0, 0.54)' }}>
-                to start using Algodesk
-              </Grid>
+              <Grid className="walletStart">to start using Algodesk</Grid>
             </Grid>
           </Grid>
-          <Grid item md={12} container style={{ height: '50%' }}>
+          <Grid item md={12} container className="walletTable">
             <Grid
               item
               md={12}
@@ -82,11 +70,7 @@ export default function WalletModal({ connectWallet, setWalletOpen }) {
               onClick={walletConnect}>
               <Grid item md={3} container justifyContent="center">
                 <Grid>
-                  <img
-                    src={algosigner}
-                    alt="logo"
-                    style={{ height: '30px', width: '30px' }}
-                  />
+                  <img src={algosigner} alt="logo" className="walletImg" />
                 </Grid>
               </Grid>
               <Grid item md={6}>
@@ -94,9 +78,7 @@ export default function WalletModal({ connectWallet, setWalletOpen }) {
               </Grid>
               <Grid item md={3} container justifyContent="flex-start">
                 <Grid>
-                  <ArrowForwardIosIcon
-                    style={{ height: '1rem', width: '1rem' }}
-                  />
+                  <ArrowForwardIosIcon className="arrowIcon" />
                 </Grid>
               </Grid>
             </Grid>
@@ -108,11 +90,7 @@ export default function WalletModal({ connectWallet, setWalletOpen }) {
               alignItems="center">
               <Grid item md={3} container justifyContent="center">
                 <Grid>
-                  <img
-                    src={wallet}
-                    alt="logo"
-                    style={{ height: '30px', width: '30px' }}
-                  />
+                  <img src={wallet} alt="logo" className="walletImg" />
                 </Grid>
               </Grid>
               <Grid item md={6}>
@@ -120,9 +98,7 @@ export default function WalletModal({ connectWallet, setWalletOpen }) {
               </Grid>
               <Grid item md={3} container justifyContent="flex-start">
                 <Grid>
-                  <ArrowForwardIosIcon
-                    style={{ height: '1rem', width: '1rem' }}
-                  />
+                  <ArrowForwardIosIcon className="arrowIcon" />
                 </Grid>
               </Grid>
             </Grid>
@@ -134,11 +110,7 @@ export default function WalletModal({ connectWallet, setWalletOpen }) {
               alignItems="center">
               <Grid item md={3} container justifyContent="center">
                 <Grid>
-                  <img
-                    src={algorand}
-                    alt="logo"
-                    style={{ height: '30px', width: '30px' }}
-                  />
+                  <img src={algorand} alt="logo" className="walletImg" />
                 </Grid>
               </Grid>
               <Grid item md={6}>
@@ -146,9 +118,7 @@ export default function WalletModal({ connectWallet, setWalletOpen }) {
               </Grid>
               <Grid item md={3} container justifyContent="flex-start">
                 <Grid>
-                  <ArrowForwardIosIcon
-                    style={{ height: '1rem', width: '1rem' }}
-                  />
+                  <ArrowForwardIosIcon className="arrowIcon" />
                 </Grid>
               </Grid>
             </Grid>
@@ -159,7 +129,7 @@ export default function WalletModal({ connectWallet, setWalletOpen }) {
               //   className="buttons"
               alignItems="center"
               justifyContent="center"
-              style={{ color: 'rgba(0, 0, 0, 0.54)' }}>
+              className="walletStart">
               By connecting, I accept Algodesk Terms of Service
             </Grid>
           </Grid>

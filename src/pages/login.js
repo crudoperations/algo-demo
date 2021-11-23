@@ -13,7 +13,6 @@ import {
 } from 'function/HelperFunction'
 import { useSnackbar } from 'notistack'
 import { useRouter } from 'next/router'
-import { makeStyles, Modal } from '@material-ui/core'
 import WalletModal from 'components/walletModal'
 import HighlightOffIcon from '@material-ui/icons/HighlightOff'
 import Paper from '@material-ui/core/Paper'
@@ -24,6 +23,7 @@ import Radio from '@material-ui/core/Radio'
 import RadioGroup from '@material-ui/core/RadioGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import FormControl from '@material-ui/core/FormControl'
+import { makeStyles, Modal } from '@material-ui/core'
 
 export default function Login() {
   const [walletValue, setWalletValue] = useState('')
@@ -202,12 +202,7 @@ export default function Login() {
                       variant="contained"
                       onClick={handleValue}
                       startIcon={
-                        <i
-                          className="fas fa-link"
-                          style={{
-                            transform: 'rotate(90deg)',
-                            fontSize: 'medium',
-                          }}></i>
+                        <i className="fas fa-link" id="connectBtn"></i>
                       }>
                       {' '}
                       Connect wallet
@@ -234,7 +229,7 @@ export default function Login() {
                       <span className="name">AlgoSigner</span>
                     </h5>
                     <HighlightOffIcon
-                      style={{ color: '#03B68C' }}
+                      className="closeIcon"
                       onClick={handleCloseModal}
                     />
                   </div>
